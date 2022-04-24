@@ -2,17 +2,11 @@
 
 Steps to make a DevOps Application and Automation
 
-## Process
-
-### Github
-
-Let's start making a Github repository: https://github.com/Askaredox/DevOpsApp
-
-### Docker
+# Docker
 
 We'll use docker to test in a local environment, so we need to install the tools to run [Docker](https://www.docker.com/) and [Docker-Compose](https://docs.docker.com/compose/).
 
-#### Step 1 - Installing docker
+## Step 1 - Installing docker
 
 First, update your existing list of packages:
 
@@ -64,7 +58,7 @@ TriggeredBy: ● docker.socket
      CGroup: /system.slice/docker.service
 ```
 
-#### Step 2 - Use docker without sudo
+## Step 2 - Use docker without sudo
 
 If you want to avoid typing sudo whenever you run the `docker` command, add your username to the docker group:
 
@@ -84,7 +78,7 @@ or restart the pc with:
 sudo reboot now
 ```
 
-#### Step 3 - Install docker-compose
+## Step 3 - Install docker-compose
 
 We can check the latest version of Docker Compose in its official [Github repository](https://github.com/docker/compose) and check the [version page](https://github.com/docker/compose/releases). At the time of this writing, the latest stable version is [2.4.1](https://github.com/docker/compose/releases/tag/v2.4.1).
 
@@ -112,11 +106,11 @@ You'll see an output like this:
 Docker Compose version v2.4.1
 ```
 
-### Coding
+# Coding
 
 Let's do some code to test docker and how will be deployed
 
-#### Step 1 - Install virtualenv (Virtual Environment for Python3)
+## Step 1 - Install virtualenv (Virtual Environment for Python3)
 
 *NOTE: Skip this step if you have already installed pip3 and virtualenv*
 
@@ -132,7 +126,7 @@ Then install virtualenv using pip3:
 sudo pip3 install virtualenv 
 ```
 
-#### Step 2 - Virtual environment creation
+## Step 2 - Virtual environment creation
 
 Inside the `python-app` folder of this repo is a small app for a REST API, so first we need to make a virtualenv to encapsulate the libraries from the global python environment.
 
@@ -156,7 +150,7 @@ First we need to activate the virtual environment:
 source venv/bin/activate
 ```
 
-#### Step 3 - Flask app and requirements.txt
+## Step 3 - Flask app and requirements.txt
 
 Then let's make some code for a Flask app, in the file `app.py` is a small code to run a Rest api using Flask. 
 
@@ -198,7 +192,7 @@ pip freeze > requirements.txt
 
 A file should have been created called `requirements.txt` with all the required libraries.
 
-#### Step 4 - Docker preparations
+## Step 4 - Docker preparations
 
 Let's create a Docker file to make an image of the python app. You can see a [Dockerfile](./python-app/Dockerfile) in the `python-app` folder with comments explaining each line.
 
@@ -231,7 +225,7 @@ services:
 
 *NOTE: It's important that the file is called `docker-compose.yaml` exactly*
 
-#### Step 5 - local tests
+## Step 5 - local tests
 
 Let's test the docker compose to run the image of python using this command in the root of the folder
 
