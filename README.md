@@ -358,6 +358,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - run: ls -l
       - run: docker-compose build
   deploy:
     runs-on: ubuntu-latest
