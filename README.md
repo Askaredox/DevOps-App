@@ -2,83 +2,15 @@
 
 Steps to make a DevOps Application and Automation
 
-# Docker
+# Prerequisites
 
-We'll use docker to test in a local environment, so we need to install the tools to run [Docker](https://www.docker.com/) and [Docker-Compose](https://docs.docker.com/compose/).
+We'll use docker to test in a local environment, so we need to install the tools to run [Docker](https://www.docker.com/) and [Docker-Compose](https://docs.docker.com/compose/), also need to install [Python3](https://www.python.org/) and [NodeJs](https://nodejs.org/en/).
 
 ## Step 1 - Installing docker
 
-First, update your existing list of packages:
+Follow the first two steps of [How to install and use Docker on Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04).
 
-```shell
-sudo apt update
-```
-
-Install the prerequisite packages
-
-```shell
-sudo apt install apt-transport-https ca-certificates curl software-properties-common
-```
-
-Then add the GPG key for the official Docker repository to your system:
-
-```shell
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-```
-
-Add the Docker repo to the APT source:
-
-```shell
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
-```
-
-Install Docker
-
-```shell
-sudo apt install docker-ce
-```
-
-Docker should now be installed, the daemon started, and the process enabled to start on boot. Check that it’s running:
-
-```shell
-sudo systemctl status docker
-```
-
-The output should be similar to the following, showing that the service is active and running:
-
-```shell
-● docker.service - Docker Application Container Engine
-     Loaded: loaded (/lib/systemd/system/docker.service; enabled; vendor preset: enabled)
-     Active: active (running) since Sun 2022-04-24 03:48:57 CST; 8h ago
-TriggeredBy: ● docker.socket
-       Docs: https://docs.docker.com
-   Main PID: 1582 (dockerd)
-      Tasks: 34
-     Memory: 158.0M
-     CGroup: /system.slice/docker.service
-```
-
-## Step 2 - Use docker without sudo
-
-If you want to avoid typing sudo whenever you run the `docker` command, add your username to the docker group:
-
-```shell
-sudo usermod -aG docker ${USER}
-```
-
-To apply the new group membership, log out of the server and back in, or type the following:
-
-```shell
-su - ${USER}
-```
-
-or restart the pc with:
-
-```shell
-sudo reboot now
-```
-
-## Step 3 - Install docker-compose
+## Step 2 - Install docker-compose
 
 We can check the latest version of Docker Compose in its official [Github repository](https://github.com/docker/compose) and check the [version page](https://github.com/docker/compose/releases). At the time of this writing, the latest stable version is [2.4.1](https://github.com/docker/compose/releases/tag/v2.4.1).
 
@@ -106,19 +38,47 @@ You'll see an output like this:
 Docker Compose version v2.4.1
 ```
 
-# Coding
+## Step 3 - Install python and pip
+
+Ubuntu 20.04 and other Debian Linux based version already have Python3 installed, let's check with:
+
+```shell
+python3 -V
+```
+
+You should see something like:
+
+```shell
+Python 3.8.10
+```
+
+To install pip you need to type this:
+
+```shell
+sudo apt install python3-pip
+```
+
+## Step 4 - Install NodeJs
+
+Install Node.js with:
+
+```shell
+sudo apt install nodejs
+```
+
+In most cases, you’ll also want to also install npm, the Node.js package manager. You can do this by installing the npm package with apt:
+
+```shell
+sudo apt install npm
+```
+
+# Python app
 
 Let's do some code to test docker and how will be deployed
 
 ## Step 1 - Install virtualenv (Virtual Environment for Python3)
 
-*NOTE: Skip this step if you have already installed pip3 and virtualenv*
-
-Install pip: 
-
-```shell
-sudo apt-get install python3-pip
-```
+*NOTE: Skip this step if you have already installed virtualenv*
 
 Then install virtualenv using pip3:
 
@@ -149,6 +109,8 @@ First we need to activate the virtual environment:
 ```shell
 source venv/bin/activate
 ```
+
+**NOTE: To quit from the virtual environment you need to type in terminal `deactivate`.**
 
 ## Step 3 - Flask app and requirements.txt
 
@@ -210,17 +172,16 @@ CMD python app.py
 Then create docker-compose file **in the ROOT of the project**. You can see a [docker-compose file](./docker-compose.yaml) in the root folder with comments explaining each line.
 
 ```docker
-services: 
-  flask-app:
-    build: python-app/. # name of the folder
-    container_name: flask-app # name of the container
-    ports:
-      - "5000:5000" # host port : container port
-    volumes:
-      - .:/flask/code # save data in a volume
-    networks: 
-      app_net:
-        ipv4_address: 172.19.0.2 # ip address of the container to communicate from other containers
+flask-app:
+  build: python-app/. # name of the folder
+  container_name: flask-app # name of the container
+  ports:
+    - "5000:5000" # host port : container port
+  volumes:
+    - .:/flask/code # save data in a volume
+  networks: 
+    app_net:
+      ipv4_address: 172.19.0.2 # ip address of the container to communicate from other containers
 ```
 
 *NOTE: It's important that the file is called `docker-compose.yaml` exactly*
@@ -253,6 +214,125 @@ You should see an output like this to see the data of the running containers:
 ```shell
 CONTAINER ID   IMAGE                 COMMAND                  CREATED         STATUS         PORTS                                       NAMES
 38bc6b1c4728   devopsapp_flask-app   "/bin/sh -c 'python …"   4 minutes ago   Up 4 minutes   0.0.0.0:5000->5000/tcp, :::5000->5000/tcp   flask-app
+```
+
+We can turn off the docker containers using this command:
+
+```shell
+docker-compose down
+```
+
+# Javascript
+
+## Step 1 - Start a Node project
+
+Create the file app.js to start creating the Node project with this code to create a simple server:
+
+```js
+// ./javascript-app/app.js
+const http = require('http');
+
+const hostname = '0.0.0.0';
+const port = 3000;
+
+const server = http.createServer((req, res) => {
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'text/plain');
+  res.end('Hello World');
+});
+
+server.listen(port, hostname, () => {
+  console.log(`Server running at http://${hostname}:${port}/`);
+});
+```
+
+Then start the node package with:
+
+```shell
+node init
+```
+
+And let's finish the process of preparation with:
+
+```shell
+npm install
+```
+
+Finally, run the project with:
+
+```shell
+node app.js
+```
+
+And the app should output something like this:
+
+```shell
+Server running at http://127.0.0.1:3000/
+```
+
+Check the browser at that direction:
+
+![Web test](./images/02_web.png)
+
+It's working like a charm.
+
+## Step 2 - Dockerize the Node project
+
+Let's create a Docker file to make an image of the python app. You can see a [Dockerfile](./javascript-app/Dockerfile) in the `javascript-app` folder with comments explaining each line.
+
+```Dockerfile
+# ./javascript-app/Dockerfile
+FROM node:12
+RUN mkdir /app
+WORKDIR /app
+COPY . /app
+RUN npm i
+CMD node app.js
+```
+
+*NOTE: It's important that the file is called `Dockerfile` exactly.*
+
+Then edit the docker-compose file **in the ROOT of the project**. You can see a [docker-compose file](./docker-compose.yaml) in the root folder with comments explaining each line.
+
+```docker
+node-app:
+  build: javascript-app/. # name of the folder where the Dockerfile is
+  container_name: node-app # name of the container
+  ports:
+    - "3000:3000" # host port : container port
+  volumes:
+    - .:/node/app # save data in a volume
+  networks: 
+    app_net:
+      ipv4_address: 172.19.0.3 # ip address of the container to communicate from other containers
+```
+
+*NOTE: It's important that the file is called `docker-compose.yaml` exactly*
+
+## Step 3 - local tests
+
+Let's test the docker compose to run the image of both apps using the previos command in the root of the folder
+
+```shell
+docker-compose up -d --build
+```
+
+The apps should be running at the same time as a background process. Let's see in the browser for both apps:
+
+![Web test](./images/03_webs.png)
+
+You can also see if the image is running with the command:
+
+```shell
+docker ps
+```
+
+You should see an output like this to see the data of the running containers:
+
+```shell
+CONTAINER ID   IMAGE                 COMMAND                  CREATED         STATUS         PORTS                                       NAMES
+72500f958704   devopsapp_flask-app   "/bin/sh -c 'python …"   2 minutes ago   Up 2 minutes   0.0.0.0:5000->5000/tcp, :::5000->5000/tcp   flask-app
+977465d7508d   devopsapp_node-app    "docker-entrypoint.s…"   2 minutes ago   Up 2 minutes   0.0.0.0:3000->3000/tcp, :::3000->3000/tcp   node-app
 ```
 
 We can turn off the docker containers using this command:
