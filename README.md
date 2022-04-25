@@ -355,14 +355,26 @@ Edit the file you just created and type this:
 name: GitHub Actions
 on: [push]
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - run: ls -l
-      - run: docker-compose build
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - run: docker-compose up -d
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - name: List files in the repository
+        run: ls ${{ github.workspace }}
+      - run: cd ${{ github.workspace }}
+      - run: docker-compose up -d --build
 ```
 
+And finally, commit and push the changes into the repository. 
+
+## Step 2 - Check the Actions
+
+On your repository let's check the Actions:
+
+![GitHub Actions](./images/04_GHA.png)
+
+Check if the workflow of the actions builds successfully.
+
+Also you can run a self-hosted server using a cloud server provider such as AWS or GCP to run the app, using this tutorial: [Adding self-hosted runners](https://docs.github.com/en/actions/hosting-your-own-runners/adding-self-hosted-runners)
