@@ -12,6 +12,7 @@ jobs:
       - run: cd ${{ github.workspace }}
       - run: docker-compose build
   deploy:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - run: cd ${{ github.workspace }}
