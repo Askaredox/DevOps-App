@@ -1,7 +1,7 @@
 name: GitHub Actions
 on: [push]
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
@@ -10,10 +10,4 @@ jobs:
       - name: List files in the repository
         run: ls ${{ github.workspace }}
       - run: cd ${{ github.workspace }}
-      - run: docker-compose build
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - run: cd ${{ github.workspace }}
-      - run: docker-compose up -d
+      - run: docker-compose up -d --build
