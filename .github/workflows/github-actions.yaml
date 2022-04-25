@@ -4,9 +4,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - run: ls -l
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - name: List files in the repository
+        run: ls ${{ github.workspace }}
+      - run: cd ${{ github.workspace }}
       - run: docker-compose build
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - run: cd ${{ github.workspace }}
       - run: docker-compose up -d
