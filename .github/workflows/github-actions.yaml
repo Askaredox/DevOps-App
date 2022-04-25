@@ -1,0 +1,11 @@
+name: GitHub Actions
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: docker-compose build
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - run: docker-compose up -d

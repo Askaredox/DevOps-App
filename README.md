@@ -171,7 +171,7 @@ CMD python app.py
 
 Then create docker-compose file **in the ROOT of the project**. You can see a [docker-compose file](./docker-compose.yaml) in the root folder with comments explaining each line.
 
-```docker
+```yaml
 flask-app:
   build: python-app/. # name of the folder
   container_name: flask-app # name of the container
@@ -294,7 +294,7 @@ CMD node app.js
 
 Then edit the docker-compose file **in the ROOT of the project**. You can see a [docker-compose file](./docker-compose.yaml) in the root folder with comments explaining each line.
 
-```docker
+```yaml
 node-app:
   build: javascript-app/. # name of the folder where the Dockerfile is
   container_name: node-app # name of the container
@@ -340,3 +340,28 @@ We can turn off the docker containers using this command:
 ```shell
 docker-compose down
 ```
+
+# Github Actions
+
+## Step 1 - Create a workflow
+
+Create a `.github/workflows` directory in your repository on GitHub if this directory does not already exist.
+
+In the `.github/workflows directory`, create a file named `github-actions.yml`.
+
+Edit the file you just created and type this:
+
+```yaml
+name: GitHub Actions
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: docker-compose build
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - run: docker-compose up -d
+```
+
