@@ -1,0 +1,12 @@
+{
+  "name": "javascript-app",
+  "version": "1.0.0",
+  "description": "Javascript application to explain DevOps",
+  "main": "app.js",
+  "dependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Askar Morales",
+  "license": "ISC"
+}
